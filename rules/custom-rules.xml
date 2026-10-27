@@ -1,0 +1,29 @@
+   <!-- Custom rules for windows-siem-detection-lab. IDs 100100 to 100102 are mine. Wazuh's default example rule 100001 is not included. -->
+
+   <group name="local,windows,authentication,">
+     <rule id="100100" level="10" frequency="5" timeframe="120">
+       <if_matched_sid>60122</if_matched_sid>
+       <same_field>win.eventdata.targetUserName</same_field>
+       <description>Lab: repeated failed logons for the same account</description>
+       <mitre><id>T1110</id></mitre>
+     </rule>
+   </group>
+
+   <group name="local,windows,sysmon,powershell,">
+     <rule id="100101" level="10">
+       <if_sid>61603</if_sid>
+       <field name="win.eventdata.image" type="pcre2">(?i)\\powershell\.exe$</field>
+       <field name="win.eventdata.commandLine" type="pcre2">(?i)-(ep|ex\w*)[\s:]+bypass</field>
+       <description>Lab: PowerShell started with execution policy bypass</description>
+       <mitre><id>T1059.001</id></mitre>
+     </rule>
+   </group>
+
+   <group name="local,windows,account,">
+     <rule id="100102" level="8">
+       <if_sid>60109</if_sid>
+       <field name="win.system.eventID">^4720$</field>
+       <description>Lab: new local user account created</description>
+       <mitre><id>T1136.001</id></mitre>
+     </rule>
+   </group>
